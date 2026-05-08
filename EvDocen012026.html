@@ -226,16 +226,25 @@ function csvUrl(s){return`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gvi
 
 function parseCSV(txt){
   const rows=[];
-  for(let line of txt.split('\n')){
-    if(!line.trim())continue;
-    const cols=[];let cur='',inQ=false;
-    for(let i=0;i<line.length;i++){
-      const c=line[i];
-      if(c==='"'){inQ=!inQ}else if(c===','&&!inQ){cols.push(cur);cur=''}else{cur+=c}
+  // Normalizar saltos de línea
+  txt=txt.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  let cur='',inQ=false,cols=[];
+  for(let i=0;i<txt.length;i++){
+    const c=txt[i];
+    if(c==='"'){
+      if(inQ&&txt[i+1]==='"'){cur+='"';i++;}
+      else{inQ=!inQ;}
+    } else if(c===','&&!inQ){
+      cols.push(cur.trim());cur='';
+    } else if(c==='\n'&&!inQ){
+      cols.push(cur.trim());
+      if(cols.some(c=>c!==''))rows.push(cols);
+      cols=[];cur='';
+    } else {
+      cur+=c;
     }
-    cols.push(cur);
-    rows.push(cols.map(c=>c.replace(/^"|"$/g,'').trim()));
   }
+  if(cols.length||cur){cols.push(cur.trim());if(cols.some(c=>c!==''))rows.push(cols);}
   return rows;
 }
 
