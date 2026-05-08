@@ -453,7 +453,7 @@ async function loadSheet(idx){
     const rows=parseCSV(txt);
     // rows[0]=título, rows[1]=metadatos, rows[2]=encabezados, rows[3+]=datos
     const headers=rows[2]||[];
-    const body=(rows.slice(3)||[]).filter(r=>r.some(c=>c.trim()!=='') && (r[0]||'').trim()!=='');
+    const body=(rows.slice(3)||[]).filter(r=>(r[0]||'').trim().length>2);
     allData[idx]={headers,body};
 
     // B2 = fila índice 1, columna B = índice 1
