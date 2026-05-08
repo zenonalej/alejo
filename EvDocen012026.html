@@ -276,25 +276,23 @@ function onSearch(idx,q){
     tb.innerHTML=buildTable(d.headers,d.body,idx);
     return;
   }
-  const hits=d.body.map((r,origIdx)=>({r,origIdx})).filter(({r})=>(r[0]||'').toLowerCase().includes(term)||(r[1]||'').toLowerCase().includes(term));
+  const hits=d.body.map((r,origIdx)=>({r,origIdx}))
+    .filter(({r})=>(r[0]||'').toLowerCase().includes(term)||(r[1]||'').toLowerCase().includes(term));
   if(!hits.length){
     sr.classList.add('open');
     sr.innerHTML='<div class="state-msg" style="padding:14px">Sin resultados</div>';
     return;
   }
   sr.classList.add('open');
-  sr.innerHTML=hits.map((r,i)=>{
+  sr.innerHTML=hits.map(({r,origIdx})=>{
     const pct=parsePct(r[4]);
     const pctStr=pct!==null?`${pct.toFixed(1)}%`:'—';
-    const origIdx=d.body.indexOf(r);
     return`<div class="search-result-item" onclick="openModal(${idx},${origIdx});clearSearch(${idx})">
       <span class="sri-pct" style="color:${pctColor(pct)}">${pctStr}</span>
       <div class="sri-name">${r[0]||'—'}</div>
       <div class="sri-doc">${r[1]||'—'}</div>
     </div>`;
   }).join('');
-// Tabla filtrada también usa origIdx para el onclick correcto
-  const filteredRows=hits.map(({r})=>r);
   let h='<table><thead><tr>';
   d.headers.forEach(x=>{h+=`<th>${x||'—'}</th>`});
   h+='</tr></thead><tbody>';
