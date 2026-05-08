@@ -276,7 +276,7 @@ function onSearch(idx,q){
     tb.innerHTML=buildTable(d.headers,d.body,idx);
     return;
   }
-  const hits=d.body.filter(r=>(r[0]||'').toLowerCase().includes(term)||(r[1]||'').toLowerCase().includes(term));
+  const hits=d.body.map((r,origIdx)=>({r,origIdx})).filter(({r})=>(r[0]||'').toLowerCase().includes(term)||(r[1]||'').toLowerCase().includes(term));
   if(!hits.length){
     sr.classList.add('open');
     sr.innerHTML='<div class="state-msg" style="padding:14px">Sin resultados</div>';
