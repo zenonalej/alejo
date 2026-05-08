@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Dashboard Evaluación Docente 01-2026</title>
+<title>Dashboard Académico</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -15,7 +15,7 @@ header .icon svg{width:20px;height:20px;fill:#fff}
 header h1{font-size:1.05rem;font-weight:600;color:#1a202c}
 header span{font-size:.75rem;font-weight:400;color:#718096;margin-left:4px}
 .container{max-width:1280px;margin:28px auto;padding:0 22px}
-.tabs{display:flex;gap:4px;background:#e2e8f0;border-radius:10px;padding:4px;width:fit-content;margin-bottom:22px}
+.tabs{display:flex;gap:4px;background:#e2e8f0;border-radius:10px;padding:4px;width:fit-content;margin-bottom:22px;flex-wrap:wrap}
 .tab-btn{padding:9px 20px;border:none;background:transparent;border-radius:7px;font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:500;color:#718096;cursor:pointer;transition:all .2s;white-space:nowrap}
 .tab-btn:hover{color:#2d3748}
 .tab-btn.active{background:#fff;color:#1a56db;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.1)}
@@ -29,14 +29,14 @@ header span{font-size:.75rem;font-weight:400;color:#718096;margin-left:4px}
 .kpi-value{font-size:1.7rem;font-weight:700;color:#1a202c;line-height:1}
 .kpi-sub{font-size:.7rem;color:#a0aec0;margin-top:4px}
 
-/* B2 GRANDES */
+/* B2 */
 .b2-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:22px}
-.b2-card{background:#1a56db;border-radius:12px;padding:20px 22px;box-shadow:0 2px 8px rgba(26,86,219,.25);color:#fff}
+.b2-card{border-radius:12px;padding:20px 22px;box-shadow:0 2px 8px rgba(0,0,0,.15);color:#fff}
 .b2-faculty{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;opacity:.8;margin-bottom:8px}
-.b2-name{font-size:1.05rem;font-weight:700;line-height:1.3}
-.b2-role{font-size:.72rem;opacity:.75;margin-top:4px}
+.b2-name{font-size:1rem;font-weight:700;line-height:1.35}
+.b2-role{font-size:.7rem;opacity:.7;margin-top:4px}
 
-/* CHARTS ROW */
+/* CHARTS */
 .charts-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:22px}
 .card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.07);overflow:hidden}
 .card-header{padding:14px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
@@ -44,48 +44,78 @@ header span{font-size:.75rem;font-weight:400;color:#718096;margin-left:4px}
 .badge{background:#ebf4ff;color:#1a56db;font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:20px}
 .chart-wrap{padding:16px;position:relative;height:220px}
 
-/* TOP/BOTTOM */
-.rank-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin-bottom:22px}
-.rank-list{padding:10px 0}
-.rank-item{display:flex;align-items:center;gap:10px;padding:8px 18px;border-bottom:1px solid #f5f5f5}
+/* RANKINGS */
+.rank-section-title{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.rank-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin-bottom:20px}
+.rank-list{padding:8px 0}
+.rank-item{display:flex;align-items:center;gap:10px;padding:8px 18px;border-bottom:1px solid #f5f5f5;cursor:pointer;transition:background .15s}
+.rank-item:hover{background:#f0f6ff}
 .rank-item:last-child{border:none}
 .rank-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;flex-shrink:0}
-.rank-num.top{background:#d1fae5;color:#065f46}
-.rank-num.bot{background:#fee2e2;color:#7f1d1d}
+.rank-num.top{background:#d1fae5;color:#065f46}.rank-num.bot{background:#fee2e2;color:#7f1d1d}
 .rank-info{flex:1;min-width:0}
 .rank-name{font-size:.8rem;font-weight:600;color:#1a202c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rank-sub{font-size:.7rem;color:#718096;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-bar-bg{height:4px;background:#e2e8f0;border-radius:2px;margin-top:4px}
+.rank-bar{height:4px;border-radius:2px;transition:width .6s ease}
 .rank-pct{font-size:.85rem;font-weight:700;flex-shrink:0}
 .rank-pct.top{color:#38a169}.rank-pct.bot{color:#e53e3e}
-.rank-bar-bg{height:4px;background:#e2e8f0;border-radius:2px;margin-top:4px}
-.rank-bar{height:4px;border-radius:2px}
 
-/* TABLE */
-.search-bar{padding:12px 16px;border-bottom:1px solid #f0f0f0}
-.search-bar input{width:100%;padding:8px 14px;border:1px solid #e2e8f0;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:.82rem;color:#2d3748;outline:none;transition:border .2s}
+/* SEARCH + TABLE */
+.search-bar{padding:12px 16px;border-bottom:1px solid #f0f0f0;position:relative}
+.search-bar input{width:100%;padding:9px 14px 9px 38px;border:1px solid #e2e8f0;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:.82rem;color:#2d3748;outline:none;transition:border .2s}
 .search-bar input:focus{border-color:#1a56db}
+.search-bar::before{content:'🔍';position:absolute;left:26px;top:50%;transform:translateY(-50%);font-size:.82rem;pointer-events:none}
+.search-results{max-height:260px;overflow-y:auto;border-bottom:1px solid #f0f0f0;display:none}
+.search-results.open{display:block}
+.search-result-item{padding:10px 18px;cursor:pointer;border-bottom:1px solid #f5f5f5;transition:background .15s}
+.search-result-item:hover{background:#f0f6ff}
+.sri-name{font-size:.83rem;font-weight:600;color:#1a202c}
+.sri-doc{font-size:.74rem;color:#718096}
+.sri-pct{font-size:.8rem;font-weight:700;color:#1a56db;float:right;margin-top:2px}
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:.81rem}
 thead th{background:#1a56db;padding:11px 16px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;color:#fff;white-space:nowrap}
-tbody tr{border-bottom:1px solid #f0f4f8;transition:background .15s}
+tbody tr{border-bottom:1px solid #f0f4f8;transition:background .15s;cursor:pointer}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:#f0f6ff}
 tbody td{padding:10px 16px;color:#4a5568}
 .state-msg{padding:40px 24px;text-align:center;color:#a0aec0;font-size:.83rem}
 .spinner{width:26px;height:26px;border:3px solid #e2e8f0;border-top-color:#1a56db;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:translateY(20px);transition:transform .25s;overflow:hidden}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.modal-title{font-size:.95rem;font-weight:700;color:#1a202c;line-height:1.3}
+.modal-sub{font-size:.78rem;color:#718096;margin-top:3px}
+.modal-close{background:none;border:none;font-size:1.3rem;color:#a0aec0;cursor:pointer;line-height:1;flex-shrink:0;margin-top:-2px}
+.modal-close:hover{color:#2d3748}
+.modal-body{padding:20px 24px 24px}
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:20px;position:relative}
+.gauge-label{font-size:2.4rem;font-weight:700;color:#1a202c;margin-top:8px}
+.gauge-sub{font-size:.78rem;color:#718096;margin-top:2px}
+.modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.mstat{background:#f8fafc;border-radius:10px;padding:12px 14px}
+.mstat-label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:#a0aec0;margin-bottom:4px}
+.mstat-val{font-size:1.1rem;font-weight:700;color:#1a202c}
+.progress-bar-bg{height:10px;background:#e2e8f0;border-radius:5px;margin-top:16px;overflow:hidden}
+.progress-bar{height:10px;border-radius:5px;transition:width .8s ease}
 .footer{text-align:center;margin-top:24px;font-size:.7rem;color:#a0aec0}
 </style>
 </head>
 <body>
 <header>
   <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v2H7V7zm0 4h10v2H7v-2zm0 4h6v2H7v-2z"/></svg></div>
-  <h1>Dashboard Evaluación Docente Ciclo 01-2026 <span>/ Facultades</span></h1>
+  <h1>Dashboard Académico <span>/ Facultades</span></h1>
 </header>
 
 <div class="container">
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab(0)">🏠 Dashboard General</button>
+    <button class="tab-btn active" onclick="switchTab(0)">🏠 General</button>
     <button class="tab-btn" onclick="switchTab(1)">⚖️ Jurídicas</button>
     <button class="tab-btn" onclick="switchTab(2)">📊 Económicas</button>
     <button class="tab-btn" onclick="switchTab(3)">🎓 Humanidades</button>
@@ -99,15 +129,11 @@ tbody td{padding:10px 16px;color:#4a5568}
       <div class="kpi-card purple"><div class="kpi-label">Económicas</div><div class="kpi-value" id="kpi-e">—</div><div class="kpi-sub">materias</div></div>
       <div class="kpi-card orange"><div class="kpi-label">Humanidades</div><div class="kpi-value" id="kpi-h">—</div><div class="kpi-sub">materias</div></div>
     </div>
-
-    <!-- B2 grandes -->
-    <div class="b2-grid" id="b2-grid">
-      <div class="b2-card"><div class="b2-faculty">⚖️ Jurídicas</div><div class="b2-name" id="b2-0">Cargando...</div><div class="b2-role">Se actualiza cada hora</div></div>
-      <div class="b2-card" style="background:#2f855a"><div class="b2-faculty">📊 Económicas</div><div class="b2-name" id="b2-1">Cargando...</div><div class="b2-role">Se actualiza cada hora</div></div>
-      <div class="b2-card" style="background:#6b46c1"><div class="b2-faculty">🎓 Humanidades</div><div class="b2-name" id="b2-2">Cargando...</div><div class="b2-role">Se actualiza cada hora</div></div>
+    <div class="b2-grid">
+      <div class="b2-card" style="background:#1a56db"><div class="b2-faculty">⚖️ Jurídicas</div><div class="b2-name" id="b2-0">Cargando...</div><div class="b2-role">Columna B · Fila 2</div></div>
+      <div class="b2-card" style="background:#2f855a"><div class="b2-faculty">📊 Económicas</div><div class="b2-name" id="b2-1">Cargando...</div><div class="b2-role">Columna B · Fila 2</div></div>
+      <div class="b2-card" style="background:#6b46c1"><div class="b2-faculty">🎓 Humanidades</div><div class="b2-name" id="b2-2">Cargando...</div><div class="b2-role">Columna B · Fila 2</div></div>
     </div>
-
-    <!-- Gráfico % completado -->
     <div class="charts-row">
       <div class="card">
         <div class="card-header"><h2>📈 % Promedio de avance por facultad</h2></div>
@@ -118,8 +144,6 @@ tbody td{padding:10px 16px;color:#4a5568}
         <div class="chart-wrap"><canvas id="chartDist"></canvas></div>
       </div>
     </div>
-
-    <!-- Top 5 / Bottom 5 por facultad -->
     <div id="rankings-container"></div>
   </div>
 
@@ -127,26 +151,64 @@ tbody td{padding:10px 16px;color:#4a5568}
   <div id="panel-1" class="panel">
     <div class="card">
       <div class="card-header"><h2>⚖️ Jurídicas</h2><span class="badge" id="badge-0">—</span></div>
-      <div class="search-bar"><input type="text" placeholder="🔍  Buscar por materia o docente..." oninput="filterTable(0,this.value)"/></div>
+      <div class="search-bar">
+        <input id="search-0" type="text" placeholder="Buscar por materia o docente..." oninput="onSearch(0,this.value)" autocomplete="off"/>
+        <div class="search-results" id="sresults-0"></div>
+      </div>
       <div class="table-wrap" id="table-0"><div class="state-msg"><div class="spinner"></div>Cargando...</div></div>
     </div>
   </div>
   <div id="panel-2" class="panel">
     <div class="card">
       <div class="card-header"><h2>📊 Económicas</h2><span class="badge" id="badge-1">—</span></div>
-      <div class="search-bar"><input type="text" placeholder="🔍  Buscar por materia o docente..." oninput="filterTable(1,this.value)"/></div>
+      <div class="search-bar">
+        <input id="search-1" type="text" placeholder="Buscar por materia o docente..." oninput="onSearch(1,this.value)" autocomplete="off"/>
+        <div class="search-results" id="sresults-1"></div>
+      </div>
       <div class="table-wrap" id="table-1"><div class="state-msg"><div class="spinner"></div>Cargando...</div></div>
     </div>
   </div>
   <div id="panel-3" class="panel">
     <div class="card">
       <div class="card-header"><h2>🎓 Humanidades</h2><span class="badge" id="badge-2">—</span></div>
-      <div class="search-bar"><input type="text" placeholder="🔍  Buscar por materia o docente..." oninput="filterTable(2,this.value)"/></div>
+      <div class="search-bar">
+        <input id="search-2" type="text" placeholder="Buscar por materia o docente..." oninput="onSearch(2,this.value)" autocomplete="off"/>
+        <div class="search-results" id="sresults-2"></div>
+      </div>
       <div class="table-wrap" id="table-2"><div class="state-msg"><div class="spinner"></div>Cargando...</div></div>
     </div>
   </div>
 
-  <div class="footer">Universidad Modular Abierta - Regional Sonsonate - Actualizado al cargar</div>
+  <div class="footer">Fuente: Google Sheets · Columnas A–F · Encabezados fila 3 · Datos desde fila 4</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="m-title">—</div>
+        <div class="modal-sub" id="m-sub">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModal(null)">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="gauge-wrap">
+        <canvas id="gaugeChart" width="220" height="120"></canvas>
+        <div class="gauge-label" id="m-pct">—</div>
+        <div class="gauge-sub">Porcentaje de avance</div>
+        <div class="progress-bar-bg" style="width:100%">
+          <div class="progress-bar" id="m-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="modal-stats">
+        <div class="mstat"><div class="mstat-label">Alumnos</div><div class="mstat-val" id="m-alumnos">—</div></div>
+        <div class="mstat"><div class="mstat-label">Hechos</div><div class="mstat-val" id="m-hechos">—</div></div>
+        <div class="mstat"><div class="mstat-label">AutoEv</div><div class="mstat-val" id="m-autoev">—</div></div>
+        <div class="mstat"><div class="mstat-label">Estado</div><div class="mstat-val" id="m-estado" style="font-size:.85rem">—</div></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -156,8 +218,10 @@ const NAMES=['Jurídicas','Económicas','Humanidades'];
 const COLORS=['#1a56db','#2f855a','#6b46c1'];
 const allData=[null,null,null];
 const loaded=[false,false,false];
-let chartAvance=null, chartDist=null;
+let chartAvance=null,chartDist=null,gaugeChartInst=null;
 
+// Fila 1=título, Fila 2=metadatos, Fila 3=encabezados, Fila 4+=datos
+// CSV: índice 0=fila1, 1=fila2, 2=fila3(headers), 3+=datos
 function csvUrl(s){return`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(s)}&range=A:F`}
 
 function parseCSV(txt){
@@ -167,9 +231,7 @@ function parseCSV(txt){
     const cols=[];let cur='',inQ=false;
     for(let i=0;i<line.length;i++){
       const c=line[i];
-      if(c==='"'){inQ=!inQ}
-      else if(c===','&&!inQ){cols.push(cur);cur=''}
-      else{cur+=c}
+      if(c==='"'){inQ=!inQ}else if(c===','&&!inQ){cols.push(cur);cur=''}else{cur+=c}
     }
     cols.push(cur);
     rows.push(cols.map(c=>c.replace(/^"|"$/g,'').trim()));
@@ -178,68 +240,159 @@ function parseCSV(txt){
 }
 
 function parsePct(v){
-  if(!v&&v!==0)return null;
+  if(v===null||v===undefined||v==='')return null;
   const n=parseFloat(String(v).replace('%','').replace(',','.'));
   return isNaN(n)?null:n;
 }
 
-function buildTable(headers,rows){
+function pctColor(p){
+  if(p===null)return'#a0aec0';
+  if(p>=75)return'#38a169';
+  if(p>=40)return'#dd6b20';
+  return'#e53e3e';
+}
+
+function buildTable(headers,rows,idx){
   let h='<table><thead><tr>';
   headers.forEach(x=>{h+=`<th>${x||'—'}</th>`});
   h+='</tr></thead><tbody>';
-  rows.forEach(r=>{
-    h+='<tr>';
+  rows.forEach((r,ri)=>{
+    h+=`<tr onclick="openModal(${idx},${ri})">`;
     headers.forEach((_,i)=>{h+=`<td>${r[i]??''}</td>`});
     h+='</tr>';
   });
   return h+'</tbody></table>';
 }
 
-function filterTable(idx,q){
+// SEARCH
+function onSearch(idx,q){
   const d=allData[idx];if(!d)return;
   const term=q.toLowerCase().trim();
-  const rows=term
-    ?d.body.filter(r=>(r[0]||'').toLowerCase().includes(term)||(r[1]||'').toLowerCase().includes(term))
-    :d.body;
-  const el=document.getElementById(`table-${idx}`);
-  el.innerHTML=rows.length?buildTable(d.headers,rows):'<div class="state-msg">Sin resultados</div>';
+  const sr=document.getElementById(`sresults-${idx}`);
+  const tb=document.getElementById(`table-${idx}`);
+
+  if(!term){
+    sr.classList.remove('open');sr.innerHTML='';
+    tb.innerHTML=buildTable(d.headers,d.body,idx);
+    return;
+  }
+  const hits=d.body.filter(r=>(r[0]||'').toLowerCase().includes(term)||(r[1]||'').toLowerCase().includes(term));
+  if(!hits.length){
+    sr.classList.add('open');
+    sr.innerHTML='<div class="state-msg" style="padding:14px">Sin resultados</div>';
+    return;
+  }
+  sr.classList.add('open');
+  sr.innerHTML=hits.map((r,i)=>{
+    const pct=parsePct(r[4]);
+    const pctStr=pct!==null?`${pct.toFixed(1)}%`:'—';
+    const origIdx=d.body.indexOf(r);
+    return`<div class="search-result-item" onclick="openModal(${idx},${origIdx});clearSearch(${idx})">
+      <span class="sri-pct" style="color:${pctColor(pct)}">${pctStr}</span>
+      <div class="sri-name">${r[0]||'—'}</div>
+      <div class="sri-doc">${r[1]||'—'}</div>
+    </div>`;
+  }).join('');
+  tb.innerHTML=buildTable(d.headers,hits,idx);
 }
 
+function clearSearch(idx){
+  const inp=document.getElementById(`search-${idx}`);
+  const sr=document.getElementById(`sresults-${idx}`);
+  if(inp)inp.value='';
+  if(sr){sr.classList.remove('open');sr.innerHTML=''}
+}
+
+// MODAL
+function openModal(idx,rowIdx){
+  const d=allData[idx];if(!d)return;
+  const r=d.body[rowIdx];if(!r)return;
+  const pct=parsePct(r[4]);
+  const pctVal=pct!==null?pct:0;
+  const col=pctColor(pct);
+
+  document.getElementById('m-title').textContent=r[0]||'—';
+  document.getElementById('m-sub').textContent=`Docente: ${r[1]||'—'} · ${NAMES[idx]}`;
+  document.getElementById('m-pct').textContent=pct!==null?`${pctVal.toFixed(1)}%`:'Sin dato';
+  document.getElementById('m-pct').style.color=col;
+  document.getElementById('m-alumnos').textContent=r[2]||'—';
+  document.getElementById('m-hechos').textContent=r[3]||'—';
+  document.getElementById('m-autoev').textContent=r[5]||'—';
+
+  // Estado semáforo
+  let estado='',estadoColor='';
+  if(pct===null){estado='Sin dato';estadoColor='#a0aec0'}
+  else if(pct>=75){estado='✅ Al día';estadoColor='#38a169'}
+  else if(pct>=40){estado='⚠️ En progreso';estadoColor='#dd6b20'}
+  else{estado='🔴 Retrasado';estadoColor='#e53e3e'}
+  const el=document.getElementById('m-estado');
+  el.textContent=estado;el.style.color=estadoColor;
+
+  // Barra progreso
+  setTimeout(()=>{
+    const bar=document.getElementById('m-bar');
+    bar.style.width=`${Math.min(pctVal,100)}%`;
+    bar.style.background=col;
+  },50);
+
+  // Gauge semicircular
+  if(gaugeChartInst){gaugeChartInst.destroy();gaugeChartInst=null}
+  const ctx=document.getElementById('gaugeChart').getContext('2d');
+  const filled=Math.min(pctVal,100);
+  const empty=100-filled;
+  gaugeChartInst=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      datasets:[{
+        data:[filled,empty],
+        backgroundColor:[col,'#e2e8f0'],
+        borderWidth:0,
+        circumference:180,
+        rotation:270
+      }]
+    },
+    options:{responsive:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:700}}
+  });
+
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('modal'))return;
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('m-bar').style.width='0%';
+}
+
+// RANKINGS
 function renderRankings(){
   const container=document.getElementById('rankings-container');
   let html='';
   allData.forEach((d,idx)=>{
     if(!d)return;
-    const withPct=d.body.map(r=>({name:r[0]||'—',doc:r[1]||'—',pct:parsePct(r[4])})).filter(x=>x.pct!==null);
+    const withPct=d.body.map((r,i)=>({name:r[0]||'—',doc:r[1]||'—',pct:parsePct(r[4]),idx:i})).filter(x=>x.pct!==null);
     const sorted=[...withPct].sort((a,b)=>b.pct-a.pct);
     const top5=sorted.slice(0,5);
     const bot5=[...sorted].reverse().slice(0,5);
     const col=COLORS[idx];
 
     const renderList=(items,type)=>items.map((it,i)=>{
-      const barColor=type==='top'?'#38a169':'#e53e3e';
-      return`<div class="rank-item">
+      const bc=type==='top'?'#38a169':'#e53e3e';
+      return`<div class="rank-item" onclick="switchTab(${idx+1});setTimeout(()=>openModal(${idx},${it.idx}),300)">
         <div class="rank-num ${type}">${i+1}</div>
         <div class="rank-info">
           <div class="rank-name">${it.name}</div>
           <div class="rank-sub">${it.doc}</div>
-          <div class="rank-bar-bg"><div class="rank-bar" style="width:${Math.min(it.pct,100)}%;background:${barColor}"></div></div>
+          <div class="rank-bar-bg"><div class="rank-bar" style="width:${Math.min(it.pct,100)}%;background:${bc}"></div></div>
         </div>
         <div class="rank-pct ${type}">${it.pct.toFixed(1)}%</div>
       </div>`;
     }).join('');
 
-    html+=`<div style="margin-bottom:20px">
-      <div style="font-size:.8rem;font-weight:700;color:${col};margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">${['⚖️','📊','🎓'][idx]} ${NAMES[idx]}</div>
+    html+=`<div style="margin-bottom:22px">
+      <div class="rank-section-title" style="color:${col};margin-bottom:10px">${['⚖️','📊','🎓'][idx]} ${NAMES[idx]}</div>
       <div class="rank-grid">
-        <div class="card">
-          <div class="card-header"><h2>🏆 Top 5 más avanzados</h2></div>
-          <div class="rank-list">${renderList(top5,'top')}</div>
-        </div>
-        <div class="card">
-          <div class="card-header"><h2>⚠️ Top 5 más demorados</h2></div>
-          <div class="rank-list">${renderList(bot5,'bot')}</div>
-        </div>
+        <div class="card"><div class="card-header"><h2>🏆 Top 5 más avanzados</h2></div><div class="rank-list">${renderList(top5,'top')}</div></div>
+        <div class="card"><div class="card-header"><h2>⚠️ Top 5 más retrasados</h2></div><div class="rank-list">${renderList(bot5,'bot')}</div></div>
       </div>
     </div>`;
   });
@@ -249,54 +402,34 @@ function renderRankings(){
 function renderCharts(){
   const avgs=allData.map(d=>{
     if(!d)return 0;
-    const vals=d.body.map(r=>parsePct(r[4])).filter(v=>v!==null);
-    return vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+    const v=d.body.map(r=>parsePct(r[4])).filter(x=>x!==null);
+    return v.length?(v.reduce((a,b)=>a+b,0)/v.length):0;
   });
   const counts=allData.map(d=>d?d.body.length:0);
-
-  // Bar chart avance
-  if(chartAvance){chartAvance.destroy()}
-  const ctx1=document.getElementById('chartAvance').getContext('2d');
-  chartAvance=new Chart(ctx1,{
+  if(chartAvance)chartAvance.destroy();
+  chartAvance=new Chart(document.getElementById('chartAvance').getContext('2d'),{
     type:'bar',
-    data:{
-      labels:NAMES,
-      datasets:[{label:'% Promedio',data:avgs,backgroundColor:COLORS.map(c=>c+'cc'),borderColor:COLORS,borderWidth:2,borderRadius:8}]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y.toFixed(1)}%`}}},
+    data:{labels:NAMES,datasets:[{label:'% Promedio',data:avgs,backgroundColor:COLORS.map(c=>c+'cc'),borderColor:COLORS,borderWidth:2,borderRadius:8}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y.toFixed(1)}%`}}},
       scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%',font:{family:'Montserrat',size:10}},grid:{color:'#f0f0f0'}},
-              x:{ticks:{font:{family:'Montserrat',size:11,weight:'600'}},grid:{display:false}}}
-    }
+              x:{ticks:{font:{family:'Montserrat',size:11,weight:'600'}},grid:{display:false}}}}
   });
-
-  // Donut distribución
-  if(chartDist){chartDist.destroy()}
-  const ctx2=document.getElementById('chartDist').getContext('2d');
-  chartDist=new Chart(ctx2,{
+  if(chartDist)chartDist.destroy();
+  chartDist=new Chart(document.getElementById('chartDist').getContext('2d'),{
     type:'doughnut',
     data:{labels:NAMES,datasets:[{data:counts,backgroundColor:COLORS.map(c=>c+'cc'),borderColor:COLORS,borderWidth:2,hoverOffset:6}]},
-    options:{
-      responsive:true,maintainAspectRatio:false,cutout:'65%',
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
       plugins:{legend:{position:'bottom',labels:{font:{family:'Montserrat',size:11},padding:12}},
-               tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} materias`}}}
-    }
+               tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} materias`}}}}
   });
 }
 
 function updateKPIs(){
-  const counts=allData.map(d=>d?d.body.length:0);
-  document.getElementById('kpi-total').textContent=counts.reduce((a,b)=>a+b,0)||'—';
-  document.getElementById('kpi-j').textContent=counts[0]||'—';
-  document.getElementById('kpi-e').textContent=counts[1]||'—';
-  document.getElementById('kpi-h').textContent=counts[2]||'—';
-}
-
-function updateB2(idx){
-  const d=allData[idx];if(!d)return;
-  const val=d.body[0]?d.body[0][1]||'—':'—';
-  document.getElementById(`b2-${idx}`).textContent=val;
+  const c=allData.map(d=>d?d.body.length:0);
+  document.getElementById('kpi-total').textContent=c.reduce((a,b)=>a+b,0)||'—';
+  document.getElementById('kpi-j').textContent=c[0]||'—';
+  document.getElementById('kpi-e').textContent=c[1]||'—';
+  document.getElementById('kpi-h').textContent=c[2]||'—';
 }
 
 async function loadSheet(idx){
@@ -307,22 +440,27 @@ async function loadSheet(idx){
     if(!res.ok)throw new Error(`HTTP ${res.status}`);
     const txt=await res.text();
     const rows=parseCSV(txt);
-    const[headers,...body]=rows;
-    const dataRows=body.filter(r=>r.some(c=>c!==''));
-    allData[idx]={headers,body:dataRows};
+    // rows[0]=título, rows[1]=metadatos, rows[2]=encabezados, rows[3+]=datos
+    const headers=rows[2]||[];
+    const body=(rows.slice(3)||[]).filter(r=>r.some(c=>c!==''));
+    allData[idx]={headers,body};
 
-    // Tabla facultad
+    // B2 = fila índice 1, columna B = índice 1
+    const b2val=rows[1]?rows[1][1]||'—':'—';
+    document.getElementById(`b2-${idx}`).textContent=b2val;
+
     const el=document.getElementById(`table-${idx}`);
     const badge=document.getElementById(`badge-${idx}`);
-    badge.textContent=`${dataRows.length} registros`;
-    el.innerHTML=dataRows.length?buildTable(headers,dataRows):'<div class="state-msg">Sin datos</div>';
+    badge.textContent=`${body.length} registros`;
+    el.innerHTML=body.length?buildTable(headers,body,idx):'<div class="state-msg">Sin datos</div>';
 
-    updateB2(idx);
     updateKPIs();
     if(allData.every(d=>d!==null)){renderCharts();renderRankings();}
   }catch(e){
-    const el=document.getElementById(`table-${idx}`);
-    if(el)el.innerHTML=`<div class="state-msg">⚠️ ${e.message}</div>`;
+    ['table-'].forEach(pre=>{
+      const el=document.getElementById(`${pre}${idx}`);
+      if(el)el.innerHTML=`<div class="state-msg">⚠️ ${e.message}</div>`;
+    });
     document.getElementById(`b2-${idx}`).textContent='Error';
   }
 }
@@ -334,6 +472,7 @@ function switchTab(idx){
   else loadSheet(idx-1);
 }
 
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal(null)});
 [0,1,2].forEach(loadSheet);
 </script>
 </body>
