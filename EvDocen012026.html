@@ -324,7 +324,7 @@ function openModal(idx,rowIdx){
   if(pct===null){estado='Sin dato';estadoColor='#a0aec0'}
   else if(pct>=75){estado='✅ Al día';estadoColor='#38a169'}
   else if(pct>=40){estado='⚠️ En progreso';estadoColor='#dd6b20'}
-  else{estado='🔴 Retrasado';estadoColor='#e53e3e'}
+  else{estado='🔴 Demorado';estadoColor='#e53e3e'}
   const el=document.getElementById('m-estado');
   el.textContent=estado;el.style.color=estadoColor;
 
