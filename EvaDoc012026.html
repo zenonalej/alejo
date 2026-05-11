@@ -6,24 +6,36 @@
 <title>Dashboard Evaluación del Desempeño Docente Ciclo 01-2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  #visit-count{
-  color:#1a56db;
-  font-weight:700;
-}
+  .pwd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.pwd-overlay.open{opacity:1;pointer-events:all}
+.pwd-box{background:#fff;border-radius:16px;padding:28px 28px 24px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:translateY(20px);transition:transform .25s}
+.pwd-overlay.open .pwd-box{transform:translateY(0)}
+.pwd-title{font-size:1rem;font-weight:700;color:#1a202c;margin-bottom:4px}
+.pwd-sub{font-size:.78rem;color:#718096;margin-bottom:16px}
+.pwd-input{width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:.88rem;outline:none;transition:border .2s;margin-bottom:10px}
+.pwd-input:focus{border-color:#1a56db}
+.pwd-error{font-size:.75rem;color:#e53e3e;margin-bottom:10px;display:none}
+.pwd-btns{display:flex;gap:8px}
+.pwd-btn{flex:1;padding:10px;border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s}
+.pwd-btn.confirm{background:#1a56db;color:#fff}.pwd-btn.confirm:hover{background:#1e429f}
+.pwd-btn.cancel{background:#e2e8f0;color:#4a5568}.pwd-btn.cancel:hover{background:#cbd5e0}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Montserrat',sans-serif;background:#f4f6f9;color:#2d3748;min-height:100vh}
 header{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 36px;display:flex;align-items:center;gap:12px}
-header .icon{width:36px;height:36px;background:#1a56db;border-radius:8px;display:flex;align-items:center;justify-content:center}
-header .icon svg{width:20px;height:20px;fill:#fff}
 header h1{font-size:1.05rem;font-weight:600;color:#1a202c}
 header span{font-size:.75rem;font-weight:400;color:#718096;margin-left:4px}
 .container{max-width:1280px;margin:28px auto;padding:0 22px}
-.tabs{display:flex;gap:4px;background:#e2e8f0;border-radius:10px;padding:4px;width:fit-content;margin-bottom:22px;flex-wrap:wrap}
+.tabs{display:flex;gap:4px;background:#e2e8f0;border-radius:10px;padding:4px;width:fit-content;margin-bottom:0;flex-wrap:wrap}
 .tab-btn{padding:9px 20px;border:none;background:transparent;border-radius:7px;font-family:'Montserrat',sans-serif;font-size:.82rem;font-weight:500;color:#718096;cursor:pointer;transition:all .2s;white-space:nowrap}
 .tab-btn:hover{color:#2d3748}
 .tab-btn.active{background:#fff;color:#1a56db;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.1)}
 .panel{display:none}.panel.active{display:block}
+.top-bar{display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.visit-badge{display:flex;align-items:center;gap:6px;background:#fff;border-radius:20px;padding:6px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);font-size:.75rem;font-weight:600;color:#718096;white-space:nowrap}
+#visit-count{color:#1a56db;font-weight:700}
 
 /* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
@@ -35,7 +47,8 @@ header span{font-size:.75rem;font-weight:400;color:#718096;margin-left:4px}
 
 /* B2 */
 .b2-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:22px}
-.b2-card{border-radius:12px;padding:20px 22px;box-shadow:0 2px 8px rgba(0,0,0,.15);color:#fff}
+.b2-card{border-radius:12px;padding:20px 22px;box-shadow:0 2px 8px rgba(0,0,0,.15);color:#fff;transition:opacity .2s}
+.b2-card:hover{opacity:.9}
 .b2-faculty{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;opacity:.8;margin-bottom:8px}
 .b2-name{font-size:1rem;font-weight:700;line-height:1.35}
 .b2-role{font-size:.7rem;opacity:.7;margin-top:4px}
@@ -76,7 +89,7 @@ header span{font-size:.75rem;font-weight:400;color:#718096;margin-left:4px}
 .search-result-item:hover{background:#f0f6ff}
 .sri-name{font-size:.83rem;font-weight:600;color:#1a202c}
 .sri-doc{font-size:.74rem;color:#718096}
-.sri-pct{font-size:.8rem;font-weight:700;color:#1a56db;float:right;margin-top:2px}
+.sri-pct{font-size:.8rem;font-weight:700;float:right;margin-top:2px}
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:.81rem}
 thead th{background:#1a56db;padding:11px 16px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;color:#fff;white-space:nowrap}
@@ -99,7 +112,7 @@ tbody td{padding:10px 16px;color:#4a5568}
 .modal-close{background:none;border:none;font-size:1.3rem;color:#a0aec0;cursor:pointer;line-height:1;flex-shrink:0;margin-top:-2px}
 .modal-close:hover{color:#2d3748}
 .modal-body{padding:20px 24px 24px}
-.gauge-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:20px;position:relative}
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:20px}
 .gauge-label{font-size:2.4rem;font-weight:700;color:#1a202c;margin-top:8px}
 .gauge-sub{font-size:.78rem;color:#718096;margin-top:2px}
 .modal-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
@@ -108,40 +121,54 @@ tbody td{padding:10px 16px;color:#4a5568}
 .mstat-val{font-size:1.1rem;font-weight:700;color:#1a202c}
 .progress-bar-bg{height:10px;background:#e2e8f0;border-radius:5px;margin-top:16px;overflow:hidden}
 .progress-bar{height:10px;border-radius:5px;transition:width .8s ease}
+
+/* PDF BTN */
+.btn-pdf{display:flex;align-items:center;gap:6px;background:#e53e3e;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap}
+.btn-pdf:hover{background:#c53030}
+.btn-pdf svg{width:15px;height:15px;fill:#fff;flex-shrink:0}
+
 .footer{text-align:center;margin-top:24px;font-size:.7rem;color:#a0aec0}
 </style>
 </head>
 <body>
 <header>
-<img src="logo-uma.png" alt="Logo UMA" style="height:48px;width:auto;object-fit:contain"/>
+  <img src="logo-uma.png" alt="Logo UMA" style="height:48px;width:auto;object-fit:contain"/>
   <h1>Evaluación del Desempeño Docente Ciclo 01-2026 <span>/ Facultades</span></h1>
 </header>
 
-<div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap">
-  <div class="tabs" style="margin-bottom:0">
-    <button class="tab-btn active" onclick="switchTab(0)">🏠 General</button>
-    <button class="tab-btn" onclick="switchTab(1)">⚖️ Jurídicas</button>
-    <button class="tab-btn" onclick="switchTab(2)">📊 Económicas</button>
-    <button class="tab-btn" onclick="switchTab(3)">🎓 Humanidades</button>
+<div class="container">
+
+  <div class="top-bar">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(0)">🏠 General</button>
+      <button class="tab-btn" onclick="switchTab(1)">⚖️ Jurídicas</button>
+      <button class="tab-btn" onclick="switchTab(2)">📊 Económicas</button>
+      <button class="tab-btn" onclick="switchTab(3)">🎓 Humanidades</button>
+    </div>
+    <div class="visit-badge">
+      <span style="font-size:.9rem">👁️</span>
+      <span id="visit-count">—</span> visitas
+    </div>
   </div>
-  <div style="display:flex;align-items:center;gap:6px;background:#fff;border-radius:20px;padding:6px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);font-size:.75rem;font-weight:600;color:#718096;white-space:nowrap">
-    <span style="font-size:.9rem">👁️</span>
-    <span id="visit-count">—</span> visitas
-  </div>
-</div>
 
   <!-- GENERAL -->
   <div id="panel-0" class="panel active">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+      <button class="btn-pdf" onclick="requestPDF(-1)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 17v-1h8v1H8zm0-3v-1h8v1H8zm0-3v-1h5v1H8z"/></svg>
+        Descargar Reporte General
+      </button>
+    </div>
     <div class="kpi-grid">
       <div class="kpi-card orange"><div class="kpi-label">Total Materias</div><div class="kpi-value" id="kpi-total">—</div><div class="kpi-sub">todas las facultades</div></div>
-      <div class="kpi-card blue" style="cursor:pointer" onclick="switchTab(1)"><div class="kpi-label">Jurídicas</div><div class="kpi-value" id="kpi-j">—</div><div class="kpi-sub">materias →</div></div>
+      <div class="kpi-card" style="cursor:pointer" onclick="switchTab(1)"><div class="kpi-label">Jurídicas</div><div class="kpi-value" id="kpi-j">—</div><div class="kpi-sub">materias →</div></div>
       <div class="kpi-card green" style="cursor:pointer" onclick="switchTab(2)"><div class="kpi-label">Económicas</div><div class="kpi-value" id="kpi-e">—</div><div class="kpi-sub">materias →</div></div>
       <div class="kpi-card purple" style="cursor:pointer" onclick="switchTab(3)"><div class="kpi-label">Humanidades</div><div class="kpi-value" id="kpi-h">—</div><div class="kpi-sub">materias →</div></div>
     </div>
-     <div class="b2-grid">
-       <div class="b2-card" style="background:#1a56db;cursor:pointer" onclick="switchTab(1)"><div class="b2-faculty">⚖️ Jurídicas</div><div class="b2-name" id="b2-0">Cargando...</div><div class="b2-role">Dato actualizado cada hora</div></div>
-        <div class="b2-card" style="background:#2f855a;cursor:pointer" onclick="switchTab(2)"><div class="b2-faculty">📊 Económicas</div><div class="b2-name" id="b2-1">Cargando...</div><div class="b2-role">Dato actualizado cada hora</div></div>
-        <div class="b2-card" style="background:#6b46c1;cursor:pointer" onclick="switchTab(3)"><div class="b2-faculty">🎓 Humanidades</div><div class="b2-name" id="b2-2">Cargando...</div><div class="b2-role">Dato actualizado cada hora</div></div>
+    <div class="b2-grid">
+      <div class="b2-card" style="background:#1a56db;cursor:pointer" onclick="switchTab(1)"><div class="b2-faculty">⚖️ Jurídicas</div><div class="b2-name" id="b2-0">Cargando...</div><div class="b2-role">Dato actualizado cada hora</div></div>
+      <div class="b2-card" style="background:#2f855a;cursor:pointer" onclick="switchTab(2)"><div class="b2-faculty">📊 Económicas</div><div class="b2-name" id="b2-1">Cargando...</div><div class="b2-role">Dato actualizado cada hora</div></div>
+      <div class="b2-card" style="background:#6b46c1;cursor:pointer" onclick="switchTab(3)"><div class="b2-faculty">🎓 Humanidades</div><div class="b2-name" id="b2-2">Cargando...</div><div class="b2-role">Dato actualizado cada hora</div></div>
     </div>
     <div class="charts-row">
       <div class="card">
@@ -156,10 +183,19 @@ tbody td{padding:10px 16px;color:#4a5568}
     <div id="rankings-container"></div>
   </div>
 
-  <!-- FACULTADES -->
+  <!-- JURÍDICAS -->
   <div id="panel-1" class="panel">
     <div class="card">
-      <div class="card-header"><h2>⚖️ Jurídicas</h2><span class="badge" id="badge-0">—</span></div>
+      <div class="card-header">
+        <h2>⚖️ Jurídicas</h2>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="badge" id="badge-0">—</span>
+          <button class="btn-pdf" onclick="requestPDF(0)">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 17v-1h8v1H8zm0-3v-1h8v1H8zm0-3v-1h5v1H8z"/></svg>
+            Descargar PDF
+          </button>
+        </div>
+      </div>
       <div class="search-bar">
         <input id="search-0" type="text" placeholder="Buscar por materia o docente..." oninput="onSearch(0,this.value)" autocomplete="off"/>
         <div class="search-results" id="sresults-0"></div>
@@ -167,9 +203,20 @@ tbody td{padding:10px 16px;color:#4a5568}
       <div class="table-wrap" id="table-0"><div class="state-msg"><div class="spinner"></div>Cargando...</div></div>
     </div>
   </div>
+
+  <!-- ECONÓMICAS -->
   <div id="panel-2" class="panel">
     <div class="card">
-      <div class="card-header"><h2>📊 Económicas</h2><span class="badge" id="badge-1">—</span></div>
+      <div class="card-header">
+        <h2>📊 Económicas</h2>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="badge" id="badge-1">—</span>
+          <button class="btn-pdf" onclick="requestPDF(1)">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 17v-1h8v1H8zm0-3v-1h8v1H8zm0-3v-1h5v1H8z"/></svg>
+            Descargar PDF
+          </button>
+        </div>
+      </div>
       <div class="search-bar">
         <input id="search-1" type="text" placeholder="Buscar por materia o docente..." oninput="onSearch(1,this.value)" autocomplete="off"/>
         <div class="search-results" id="sresults-1"></div>
@@ -177,9 +224,20 @@ tbody td{padding:10px 16px;color:#4a5568}
       <div class="table-wrap" id="table-1"><div class="state-msg"><div class="spinner"></div>Cargando...</div></div>
     </div>
   </div>
+
+  <!-- HUMANIDADES -->
   <div id="panel-3" class="panel">
     <div class="card">
-      <div class="card-header"><h2>🎓 Humanidades</h2><span class="badge" id="badge-2">—</span></div>
+      <div class="card-header">
+        <h2>🎓 Humanidades</h2>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="badge" id="badge-2">—</span>
+          <button class="btn-pdf" onclick="requestPDF(2)">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 17v-1h8v1H8zm0-3v-1h8v1H8zm0-3v-1h5v1H8z"/></svg>
+            Descargar PDF
+          </button>
+        </div>
+      </div>
       <div class="search-bar">
         <input id="search-2" type="text" placeholder="Buscar por materia o docente..." oninput="onSearch(2,this.value)" autocomplete="off"/>
         <div class="search-results" id="sresults-2"></div>
@@ -188,7 +246,7 @@ tbody td{padding:10px 16px;color:#4a5568}
     </div>
   </div>
 
-  <div class="footer">Creado en Universidad Modular Abierta Regional Sonsonate - Solo para uso informativo. Año 2026</div>
+  <div class="footer">Creado en Universidad Modular Abierta Regional Sonsonate — Solo para uso informativo. Año 2026</div>
 </div>
 
 <!-- MODAL -->
@@ -225,6 +283,8 @@ const _a=['1u-n_z','r6AIWX','XtJiAG','7oX-ib','-_LvdD','QHP89k','uD-OJ1','Ro'];
 const _b=[[104,116,116,112,115],[58,47,47],[100,111,99,115,46,103,111,111,103,108,101],[46,99,111,109,47],[115,112,114,101,97,100,115,104,101,101,116,115,47,100,47]];
 const _sid=()=>_a.join('');
 const _base=()=>_b.map(g=>g.map(c=>String.fromCharCode(c)).join('')).join('');
+function csvUrl(s){return`${_base()}${_sid()}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(s)}&range=A:F`}
+
 const SHEETS=['Juridicas','Economicas','Humanidades'];
 const NAMES=['Jurídicas','Económicas','Humanidades'];
 const COLORS=['#1a56db','#2f855a','#6b46c1'];
@@ -232,14 +292,8 @@ const allData=[null,null,null];
 const loaded=[false,false,false];
 let chartAvance=null,chartDist=null,gaugeChartInst=null;
 
-// Fila 1=título, Fila 2=metadatos, Fila 3=encabezados, Fila 4+=datos
-// CSV: índice 0=fila1, 1=fila2, 2=fila3(headers), 3+=datos
-function csvUrl(s){
-  return`${_base()}${_sid()}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(s)}&range=A:F`;
-}
 function parseCSV(txt){
   const rows=[];
-  // Normalizar saltos de línea
   txt=txt.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
   let cur='',inQ=false,cols=[];
   for(let i=0;i<txt.length;i++){
@@ -247,15 +301,12 @@ function parseCSV(txt){
     if(c==='"'){
       if(inQ&&txt[i+1]==='"'){cur+='"';i++;}
       else{inQ=!inQ;}
-    } else if(c===','&&!inQ){
-      cols.push(cur.trim());cur='';
-    } else if(c==='\n'&&!inQ){
+    }else if(c===','&&!inQ){cols.push(cur.trim());cur='';}
+    else if(c==='\n'&&!inQ){
       cols.push(cur.trim());
       if(cols.some(c=>c!==''))rows.push(cols);
       cols=[];cur='';
-    } else {
-      cur+=c;
-    }
+    }else{cur+=c;}
   }
   if(cols.length||cur){cols.push(cur.trim());if(cols.some(c=>c!==''))rows.push(cols);}
   return rows;
@@ -286,13 +337,11 @@ function buildTable(headers,rows,idx){
   return h+'</tbody></table>';
 }
 
-// SEARCH
 function onSearch(idx,q){
   const d=allData[idx];if(!d)return;
   const term=q.toLowerCase().trim();
   const sr=document.getElementById(`sresults-${idx}`);
   const tb=document.getElementById(`table-${idx}`);
-
   if(!term){
     sr.classList.remove('open');sr.innerHTML='';
     tb.innerHTML=buildTable(d.headers,d.body,idx);
@@ -331,17 +380,15 @@ function clearSearch(idx){
   const inp=document.getElementById(`search-${idx}`);
   const sr=document.getElementById(`sresults-${idx}`);
   if(inp)inp.value='';
-  if(sr){sr.classList.remove('open');sr.innerHTML=''}
+  if(sr){sr.classList.remove('open');sr.innerHTML='';}
 }
 
-// MODAL
 function openModal(idx,rowIdx){
   const d=allData[idx];if(!d)return;
   const r=d.body[rowIdx];if(!r)return;
   const pct=parsePct(r[4]);
   const pctVal=pct!==null?pct:0;
   const col=pctColor(pct);
-
   document.getElementById('m-title').textContent=r[0]||'—';
   document.getElementById('m-sub').textContent=`Docente: ${r[1]||'—'} · ${NAMES[idx]}`;
   document.getElementById('m-pct').textContent=pct!==null?`${pctVal.toFixed(1)}%`:'Sin dato';
@@ -349,42 +396,25 @@ function openModal(idx,rowIdx){
   document.getElementById('m-alumnos').textContent=r[2]||'—';
   document.getElementById('m-hechos').textContent=r[3]||'—';
   document.getElementById('m-autoev').textContent=r[5]||'—';
-
-  // Estado semáforo
   let estado='',estadoColor='';
-  if(pct===null){estado='Sin dato';estadoColor='#a0aec0'}
-  else if(pct>=75){estado='✅ Al día';estadoColor='#38a169'}
-  else if(pct>=40){estado='⚠️ En progreso';estadoColor='#dd6b20'}
-  else{estado='🔴 Demorado';estadoColor='#e53e3e'}
+  if(pct===null){estado='Sin dato';estadoColor='#a0aec0';}
+  else if(pct>=75){estado='✅ Al día';estadoColor='#38a169';}
+  else if(pct>=40){estado='⚠️ En progreso';estadoColor='#dd6b20';}
+  else{estado='🔴 Demorado';estadoColor='#e53e3e';}
   const el=document.getElementById('m-estado');
   el.textContent=estado;el.style.color=estadoColor;
-
-  // Barra progreso
   setTimeout(()=>{
     const bar=document.getElementById('m-bar');
     bar.style.width=`${Math.min(pctVal,100)}%`;
     bar.style.background=col;
   },50);
-
-  // Gauge semicircular
-  if(gaugeChartInst){gaugeChartInst.destroy();gaugeChartInst=null}
+  if(gaugeChartInst){gaugeChartInst.destroy();gaugeChartInst=null;}
   const ctx=document.getElementById('gaugeChart').getContext('2d');
-  const filled=Math.min(pctVal,100);
-  const empty=100-filled;
   gaugeChartInst=new Chart(ctx,{
     type:'doughnut',
-    data:{
-      datasets:[{
-        data:[filled,empty],
-        backgroundColor:[col,'#e2e8f0'],
-        borderWidth:0,
-        circumference:180,
-        rotation:270
-      }]
-    },
+    data:{datasets:[{data:[Math.min(pctVal,100),100-Math.min(pctVal,100)],backgroundColor:[col,'#e2e8f0'],borderWidth:0,circumference:180,rotation:270}]},
     options:{responsive:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{duration:700}}
   });
-
   document.getElementById('modal').classList.add('open');
 }
 
@@ -394,7 +424,6 @@ function closeModal(e){
   document.getElementById('m-bar').style.width='0%';
 }
 
-// RANKINGS
 function renderRankings(){
   const container=document.getElementById('rankings-container');
   let html='';
@@ -405,7 +434,6 @@ function renderRankings(){
     const top5=sorted.slice(0,5);
     const bot5=[...sorted].reverse().slice(0,5);
     const col=COLORS[idx];
-
     const renderList=(items,type)=>items.map((it,i)=>{
       const bc=type==='top'?'#38a169':'#e53e3e';
       return`<div class="rank-item" onclick="switchTab(${idx+1});setTimeout(()=>openModal(${idx},${it.idx}),300)">
@@ -418,7 +446,6 @@ function renderRankings(){
         <div class="rank-pct ${type}">${it.pct.toFixed(1)}%</div>
       </div>`;
     }).join('');
-
     html+=`<div style="margin-bottom:22px">
       <div class="rank-section-title" style="color:${col};margin-bottom:10px">${['⚖️','📊','🎓'][idx]} ${NAMES[idx]}</div>
       <div class="rank-grid">
@@ -471,28 +498,21 @@ async function loadSheet(idx){
     if(!res.ok)throw new Error(`HTTP ${res.status}`);
     const txt=await res.text();
     const rows=parseCSV(txt);
-    // rows[0]=título, rows[1]=metadatos, rows[2]=encabezados, rows[3+]=datos
     const headers=rows[2]||[];
-    const body=(rows.slice(3)||[]).filter(r=>(r[0]||'').trim().length>2);
+    const body=(rows.slice(3)||[]).filter(r=>(r[0]||'').trim().length>2&&isNaN((r[0]||'').trim()));
     allData[idx]={headers,body};
-
-    // B2 = fila índice 1, columna B = índice 1
     const b2row=rows[1]||[];
     const b2val=b2row.find(c=>c.toLowerCase().includes('actualizado'))||b2row.find(c=>c.trim()!=='')||'—';
     document.getElementById(`b2-${idx}`).textContent=b2val;
-
     const el=document.getElementById(`table-${idx}`);
     const badge=document.getElementById(`badge-${idx}`);
     badge.textContent=`${body.length} registros`;
     el.innerHTML=body.length?buildTable(headers,body,idx):'<div class="state-msg">Sin datos</div>';
-
     updateKPIs();
     if(allData.every(d=>d!==null)){renderCharts();renderRankings();}
   }catch(e){
-    ['table-'].forEach(pre=>{
-      const el=document.getElementById(`${pre}${idx}`);
-      if(el)el.innerHTML=`<div class="state-msg">⚠️ ${e.message}</div>`;
-    });
+    const el=document.getElementById(`table-${idx}`);
+    if(el)el.innerHTML=`<div class="state-msg">⚠️ ${e.message}</div>`;
     document.getElementById(`b2-${idx}`).textContent='Error';
   }
 }
@@ -504,7 +524,219 @@ function switchTab(idx){
   else loadSheet(idx-1);
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal(null)});
+// PDF
+let _pendingPdfIdx=null;
+
+function requestPDF(idx){
+  _pendingPdfIdx=idx;
+  const overlay=document.getElementById('pwd-modal');
+  const input=document.getElementById('pwd-input');
+  const err=document.getElementById('pwd-error');
+  input.value='';
+  err.style.display='none';
+  overlay.classList.add('open');
+  setTimeout(()=>input.focus(),300);
+}
+
+function closePwd(){
+  document.getElementById('pwd-modal').classList.remove('open');
+  _pendingPdfIdx=null;
+}
+
+function confirmPwd(){
+  const input=document.getElementById('pwd-input');
+  const err=document.getElementById('pwd-error');
+  // Contraseña ofuscada en base64
+  const _k=atob('VW1hMjAyNio=');
+  if(input.value===_k){
+    document.getElementById('pwd-modal').classList.remove('open');
+    exportPDF(_pendingPdfIdx);
+  }else{
+    err.style.display='block';
+    input.value='';
+    input.focus();
+  }
+}
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF('p','mm','a4');
+  const pw=doc.internal.pageSize.getWidth();
+  const ph=doc.internal.pageSize.getHeight();
+  const margin=14;
+  const usable=pw-(margin*2);
+  let y=margin;
+  doc.setFont('helvetica');
+
+  // ENCABEZADO
+  doc.setFillColor(26,86,219);
+  doc.rect(0,0,pw,30,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(14);doc.setFont('helvetica','bold');
+  doc.text('Universidad Modular Abierta',pw/2,10,{align:'center'});
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text('Evaluación del Desempeño Docente — Ciclo 01-2026',pw/2,17,{align:'center'});
+  const titulo=idx===-1?'Reporte General':['Facultad de CC.JJ.','Facultad de CC.EE.','Facultad de Humanidades'][idx];
+  doc.setFontSize(11);doc.setFont('helvetica','bold');
+  doc.text(titulo,pw/2,25,{align:'center'});
+  y=36;
+
+  doc.setTextColor(120,120,120);doc.setFontSize(8);doc.setFont('helvetica','normal');
+  doc.text(`Generado el ${new Date().toLocaleString('es-SV')}`,pw/2,y,{align:'center'});
+  y+=8;
+
+  if(idx===-1){
+    // KPIs generales
+    doc.setTextColor(26,86,219);doc.setFontSize(10);doc.setFont('helvetica','bold');
+    doc.text('RESUMEN GENERAL',margin,y);y+=6;
+    const kpis=[
+      ['Total Materias',allData.map(d=>d?d.body.length:0).reduce((a,b)=>a+b,0)],
+      ['Jurídicas',allData[0]?allData[0].body.length:'—'],
+      ['Económicas',allData[1]?allData[1].body.length:'—'],
+      ['Humanidades',allData[2]?allData[2].body.length:'—'],
+    ];
+    const kw=(usable/4)-2;
+    kpis.forEach(([label,val],i)=>{
+      const x=margin+(i*(kw+2.5));
+      doc.setFillColor(245,247,250);doc.roundedRect(x,y,kw,16,2,2,'F');
+      doc.setTextColor(100,100,100);doc.setFontSize(7);doc.setFont('helvetica','normal');
+      doc.text(label.toUpperCase(),x+kw/2,y+5,{align:'center'});
+      doc.setTextColor(26,32,44);doc.setFontSize(14);doc.setFont('helvetica','bold');
+      doc.text(String(val),x+kw/2,y+13,{align:'center'});
+    });
+    y+=22;
+
+    // Barras promedio
+    doc.setTextColor(26,86,219);doc.setFontSize(10);doc.setFont('helvetica','bold');
+    doc.text('PROMEDIO DE AVANCE POR FACULTAD',margin,y);y+=6;
+    allData.forEach((d,i)=>{
+      if(!d)return;
+      const vals=d.body.map(r=>parsePct(r[4])).filter(v=>v!==null);
+      const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+      const col=[[26,86,219],[47,133,90],[107,70,193]][i];
+      doc.setTextColor(26,32,44);doc.setFontSize(8);doc.setFont('helvetica','bold');
+      doc.text(NAMES[i],margin,y-1);
+      doc.setFillColor(...col);doc.rect(margin,y,usable*(avg/100),7,'F');
+      doc.setFillColor(220,220,220);doc.rect(margin+usable*(avg/100),y,usable*(1-avg/100),7,'F');
+      doc.setTextColor(26,32,44);doc.text(`${avg.toFixed(1)}%`,margin+usable+2,y+5);
+      y+=14;
+    });
+    y+=4;
+
+    // Top/Bottom por facultad
+    allData.forEach((d,idx2)=>{
+      if(!d)return;
+      if(y>ph-50){doc.addPage();y=margin;}
+      const col=[[26,86,219],[47,133,90],[107,70,193]][idx2];
+      doc.setFillColor(...col);doc.rect(margin,y,usable,7,'F');
+      doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont('helvetica','bold');
+      doc.text(NAMES[idx2].toUpperCase(),pw/2,y+5,{align:'center'});
+      y+=10;
+      const withPct=d.body.map(r=>({name:r[0]||'—',doc:r[1]||'—',pct:parsePct(r[4])})).filter(x=>x.pct!==null);
+      const sorted=[...withPct].sort((a,b)=>b.pct-a.pct);
+      const top5=sorted.slice(0,5);
+      const bot5=[...sorted].reverse().slice(0,5);
+      const half=(usable/2)-3;
+      doc.setFillColor(209,250,229);doc.roundedRect(margin,y,half,6,1,1,'F');
+      doc.setTextColor(6,95,70);doc.setFontSize(8);doc.setFont('helvetica','bold');
+      doc.text('Top 5 mas avanzados',margin+2,y+4);
+      doc.setFillColor(254,226,226);doc.roundedRect(margin+half+6,y,half,6,1,1,'F');
+      doc.setTextColor(127,29,29);
+      doc.text('Top 5 mas demorados',margin+half+8,y+4);
+      y+=8;
+      for(let i=0;i<5;i++){
+        const t=top5[i],b=bot5[i];
+        if(t){
+          doc.setTextColor(26,32,44);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+          doc.text(`${i+1}. ${t.name.length>28?t.name.substring(0,26)+'…':t.name}`,margin,y+3);
+          doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);
+          doc.text(t.doc.length>28?t.doc.substring(0,26)+'…':t.doc,margin,y+7);
+          doc.setTextColor(56,161,105);doc.setFont('helvetica','bold');
+          doc.text(`${t.pct.toFixed(1)}%`,margin+half-2,y+3,{align:'right'});
+        }
+        if(b){
+          const bx=margin+half+6;
+          doc.setTextColor(26,32,44);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+          doc.text(`${i+1}. ${b.name.length>28?b.name.substring(0,26)+'…':b.name}`,bx,y+3);
+          doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);
+          doc.text(b.doc.length>28?b.doc.substring(0,26)+'…':b.doc,bx,y+7);
+          doc.setTextColor(229,62,62);doc.setFont('helvetica','bold');
+          doc.text(`${b.pct.toFixed(1)}%`,bx+half-2,y+3,{align:'right'});
+        }
+        y+=10;
+      }
+      y+=6;
+    });
+
+  }else{
+    // REPORTE POR FACULTAD
+    const d=allData[idx];
+    if(!d){doc.setTextColor(200,0,0);doc.text('Datos no cargados aun.',margin,y);doc.save(`reporte-${NAMES[idx]}.pdf`);return;}
+    const vals=d.body.map(r=>parsePct(r[4])).filter(v=>v!==null);
+    const avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+    const completed=vals.filter(v=>v>=75).length;
+    const kpis2=[['Total Materias',d.body.length],['Promedio %',avg.toFixed(1)+'%'],['Al dia (>=75%)',completed],['Pendientes',d.body.length-completed]];
+    const kw2=(usable/4)-2;
+    kpis2.forEach(([label,val],i)=>{
+      const x=margin+(i*(kw2+2.5));
+      doc.setFillColor(245,247,250);doc.roundedRect(x,y,kw2,16,2,2,'F');
+      doc.setTextColor(100,100,100);doc.setFontSize(7);doc.setFont('helvetica','normal');
+      doc.text(label.toUpperCase(),x+kw2/2,y+5,{align:'center'});
+      doc.setTextColor(26,32,44);doc.setFontSize(12);doc.setFont('helvetica','bold');
+      doc.text(String(val),x+kw2/2,y+13,{align:'center'});
+    });
+    y+=22;
+
+    doc.setTextColor(26,86,219);doc.setFontSize(10);doc.setFont('helvetica','bold');
+    doc.text('LISTADO COMPLETO DE MATERIAS',margin,y);y+=5;
+    const cols2=['Materia','Docente','Alumnos','Hechos','%','AutoEv'];
+    const cw=[60,60,18,18,14,12];
+
+    const drawHeader=()=>{
+      doc.setFillColor(26,86,219);doc.rect(margin,y,usable,7,'F');
+      doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
+      let cx=margin;cols2.forEach((c,i)=>{doc.text(c,cx+1,y+5);cx+=cw[i];});
+      y+=8;
+    };
+    drawHeader();
+
+    d.body.forEach((r,i)=>{
+      if(y>ph-20){doc.addPage();y=margin;drawHeader();}
+      doc.setFillColor(i%2===0?255:248,i%2===0?255:250,i%2===0?255:252);
+      doc.rect(margin,y,usable,7,'F');
+      const pct=parsePct(r[4]);
+      const cells=[
+        (r[0]||'').length>32?(r[0]).substring(0,30)+'…':(r[0]||''),
+        (r[1]||'').length>32?(r[1]).substring(0,30)+'…':(r[1]||''),
+        r[2]||'',r[3]||'',r[4]||'',r[5]||''
+      ];
+      let cx=margin;
+      cells.forEach((c,ci)=>{
+        if(ci===4&&pct!==null){
+          const pc=pctColor(pct);
+          const rgb=pc==='#38a169'?[56,161,105]:pc==='#dd6b20'?[221,107,32]:[229,62,62];
+          doc.setTextColor(...rgb);doc.setFont('helvetica','bold');
+        }else{doc.setTextColor(74,85,104);doc.setFont('helvetica','normal');}
+        doc.setFontSize(6.5);
+        doc.text(String(c),cx+1,y+5);cx+=cw[ci];
+      });
+      y+=7;
+    });
+  }
+
+  // PIE DE PÁGINA
+  const total=doc.internal.getNumberOfPages();
+  for(let p=1;p<=total;p++){
+    doc.setPage(p);
+    doc.setFillColor(245,247,250);doc.rect(0,ph-10,pw,10,'F');
+    doc.setTextColor(160,174,192);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text('Universidad Modular Abierta Regional Sonsonate — Solo para uso informativo — 2026',pw/2,ph-4,{align:'center'});
+    doc.text(`Pagina ${p} de ${total}`,pw-margin,ph-4,{align:'right'});
+  }
+
+  const fname=idx===-1?'Reporte-General-UMA':`Reporte-${NAMES[idx].replace(/[^a-zA-Z]/g,'')}-UMA`;
+  doc.save(`${fname}-${new Date().toLocaleDateString('es-SV').replace(/\//g,'-')}.pdf`);
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal(null);});
 [0,1,2].forEach(loadSheet);
 </script>
 
@@ -515,17 +747,23 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal(null)});
     const r=await fetch('https://zenonalej.goatcounter.com/counter//.json');
     const d=await r.json();
     el.textContent=d.count_unique||d.count||'—';
-  }catch(e){el.textContent='—';}
+  }catch(e){
+    const k='uma_visits';
+    let v=parseInt(localStorage.getItem(k)||'0')+1;
+    localStorage.setItem(k,v);
+    el.textContent=v;
+  }
 })();
 </script>
 <script data-goatcounter="https://zenonalej.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-  
-  <script>
+
+<script>
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{
   if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key))||(e.ctrlKey&&e.key==='U'))
     e.preventDefault();
 });
 </script>
+
 </body>
 </html>
