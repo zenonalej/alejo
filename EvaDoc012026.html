@@ -7,6 +7,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+  #visit-count{
+  color:#1a56db;
+  font-weight:700;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Montserrat',sans-serif;background:#f4f6f9;color:#2d3748;min-height:100vh}
 header{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 36px;display:flex;align-items:center;gap:12px}
@@ -113,21 +117,26 @@ tbody td{padding:10px 16px;color:#4a5568}
   <h1>Evaluación del Desempeño Docente Ciclo 01-2026 <span>/ Facultades</span></h1>
 </header>
 
-<div class="container">
-  <div class="tabs">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap">
+  <div class="tabs" style="margin-bottom:0">
     <button class="tab-btn active" onclick="switchTab(0)">🏠 General</button>
     <button class="tab-btn" onclick="switchTab(1)">⚖️ Jurídicas</button>
     <button class="tab-btn" onclick="switchTab(2)">📊 Económicas</button>
     <button class="tab-btn" onclick="switchTab(3)">🎓 Humanidades</button>
   </div>
+  <div style="display:flex;align-items:center;gap:6px;background:#fff;border-radius:20px;padding:6px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);font-size:.75rem;font-weight:600;color:#718096;white-space:nowrap">
+    <span style="font-size:.9rem">👁️</span>
+    <span id="visit-count">—</span> visitas
+  </div>
+</div>
 
   <!-- GENERAL -->
   <div id="panel-0" class="panel active">
     <div class="kpi-grid">
       <div class="kpi-card orange"><div class="kpi-label">Total Materias</div><div class="kpi-value" id="kpi-total">—</div><div class="kpi-sub">todas las facultades</div></div>
-      <div class="kpi-card blue"><div class="kpi-label">Jurídicas</div><div class="kpi-value" id="kpi-j">—</div><div class="kpi-sub">materias</div></div>
-      <div class="kpi-card green"><div class="kpi-label">Económicas</div><div class="kpi-value" id="kpi-e">—</div><div class="kpi-sub">materias</div></div>
-      <div class="kpi-card purple"><div class="kpi-label">Humanidades</div><div class="kpi-value" id="kpi-h">—</div><div class="kpi-sub">materias</div></div>
+      <div class="kpi-card blue" style="cursor:pointer" onclick="switchTab(1)"><div class="kpi-label">Jurídicas</div><div class="kpi-value" id="kpi-j">—</div><div class="kpi-sub">materias →</div></div>
+      <div class="kpi-card green" style="cursor:pointer" onclick="switchTab(2)"><div class="kpi-label">Económicas</div><div class="kpi-value" id="kpi-e">—</div><div class="kpi-sub">materias →</div></div>
+      <div class="kpi-card purple" style="cursor:pointer" onclick="switchTab(3)"><div class="kpi-label">Humanidades</div><div class="kpi-value" id="kpi-h">—</div><div class="kpi-sub">materias →</div></div>
     </div>
      <div class="b2-grid">
        <div class="b2-card" style="background:#1a56db;cursor:pointer" onclick="switchTab(1)"><div class="b2-faculty">⚖️ Jurídicas</div><div class="b2-name" id="b2-0">Cargando...</div><div class="b2-role">Dato actualizado cada hora</div></div>
@@ -498,6 +507,19 @@ function switchTab(idx){
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal(null)});
 [0,1,2].forEach(loadSheet);
 </script>
+
+<script>
+(async function(){
+  const el=document.getElementById('visit-count');
+  try{
+    const r=await fetch('https://zenonalej.goatcounter.com/counter//.json');
+    const d=await r.json();
+    el.textContent=d.count_unique||d.count||'—';
+  }catch(e){el.textContent='—';}
+})();
+</script>
+<script data-goatcounter="https://zenonalej.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  
   <script>
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{
