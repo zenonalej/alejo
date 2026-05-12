@@ -96,6 +96,14 @@
   /* ---- ERRORS ---- */
   .error-box { background: var(--error-bg); border: 1px solid #FECACA; border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; font-size:.85rem; color: var(--error); display:none; }
 
+  /* ---- FILTER BUTTONS ---- */
+  .filter-btn { padding: 4px 12px; border-radius: 20px; font-size: .75rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--gray-200); background: var(--gray-50); color: var(--gray-600); transition: all .15s; }
+  .filter-btn:hover { border-color: var(--gray-400); }
+  .filter-btn.active { background: var(--gray-800); color: #fff; border-color: var(--gray-800); }
+  .filter-btn.fail.active  { background: var(--error);   color: #fff; border-color: var(--error);   }
+  .filter-btn.ok.active    { background: var(--success);  color: #fff; border-color: var(--success);  }
+  .result-table tr.hidden  { display: none; }
+
   /* ---- RESPONSIVE ---- */
   @media(max-width:600px){
     .metrics-grid { grid-template-columns: 1fr 1fr; }
@@ -175,7 +183,14 @@
 
     <!-- DETALLE -->
     <div class="card">
-      <div class="card-title">🔍 Detalle de Resultados</div>
+      <div class="card-title">🔍 Detalle de Resultados
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <button class="filter-btn active" onclick="filterTable('all')" id="btn-all">Todos</button>
+          <button class="filter-btn fail" onclick="filterTable('fail')" id="btn-fail">✗ Incorrectos</button>
+          <button class="filter-btn ok" onclick="filterTable('correct')" id="btn-correct">✓ Correctos</button>
+        </div>
+      </div>
+      <div id="filterSummary" style="font-size:.78rem;color:var(--gray-400);margin-bottom:.75rem"></div>
       <div style="overflow-x:auto">
         <table class="result-table">
           <thead>
@@ -720,16 +735,21 @@ function renderDashboard(items) {
     }
   });
 
-  // Detail table
+  // Detail table — incorrectos primero, luego correctos
   const tbody = document.getElementById('detailBody');
   tbody.innerHTML = '';
-  items.forEach(item => {
+  const failItems    = items.filter(i => i.status !== 'correct');
+  const correctItems = items.filter(i => i.status === 'correct');
+  const sorted = [...failItems, ...correctItems];
+
+  sorted.forEach(item => {
     const pillClass = item.status === 'correct' ? 'pill-ok' : item.status === 'partial' ? 'pill-partial' : 'pill-fail';
-    const pillText = item.status === 'correct' ? '✓ Correcto' : item.status === 'partial' ? '~ Parcial' : '✗ Incorrecto';
-    const foundStr = item.found !== null && item.found !== undefined ? String(item.found).slice(0,40) : '—';
-    const expStr = item.expected !== null && item.expected !== undefined ? String(item.expected).slice(0,40) : '—';
+    const pillText  = item.status === 'correct' ? '✓ Correcto' : item.status === 'partial' ? '~ Parcial' : '✗ Incorrecto';
+    const foundStr  = item.found    !== null && item.found    !== undefined ? String(item.found).slice(0,40)    : '—';
+    const expStr    = item.expected !== null && item.expected !== undefined ? String(item.expected).slice(0,40) : '—';
+    const rowClass  = item.status === 'correct' ? 'row-correct' : 'row-fail';
     tbody.innerHTML += `
-      <tr>
+      <tr data-status="${item.status}" class="${rowClass}">
         <td style="white-space:nowrap;color:var(--gray-600);font-size:.75rem">${item.sheet}</td>
         <td>${item.label}</td>
         <td style="font-family:monospace;font-size:.75rem;color:var(--gray-400)">${item.cell}</td>
@@ -740,9 +760,47 @@ function renderDashboard(items) {
       </tr>`;
   });
 
+  // Update button counters
+  document.getElementById('btn-all').textContent    = `Todos (${items.length})`;
+  document.getElementById('btn-fail').textContent   = `✗ Incorrectos (${failItems.length})`;
+  document.getElementById('btn-correct').textContent = `✓ Correctos (${correctItems.length})`;
+
+  // Default: show incorrectos first (already sorted), activate "Todos"
+  filterTable('all');
   document.getElementById('dashboard').style.display = 'block';
   document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
 }
-</script>
-</body>
-</html>
+// ─────────────────────────────────────────────
+//  FILTER TABLE
+// ─────────────────────────────────────────────
+function filterTable(mode) {
+  const rows = document.querySelectorAll('#detailBody tr');
+  let visible = 0;
+  rows.forEach(row => {
+    const status = row.dataset.status;
+    const show = mode === 'all'
+      || (mode === 'fail'    && status !== 'correct')
+      || (mode === 'correct' && status === 'correct');
+    row.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+
+  // Update active button
+  ['all','fail','correct'].forEach(m => {
+    const btn = document.getElementById('btn-' + m);
+    btn.classList.toggle('active', m === mode);
+  });
+
+  // Summary line
+  const summary = document.getElementById('filterSummary');
+  if (mode === 'fail') {
+    summary.textContent = `Mostrando ${visible} ítem(s) incorrecto(s) o parcial(es) — revisa estos primero.`;
+    summary.style.color = 'var(--error)';
+  } else if (mode === 'correct') {
+    summary.textContent = `Mostrando ${visible} ítem(s) correcto(s).`;
+    summary.style.color = 'var(--success)';
+  } else {
+    summary.textContent = `Incorrectos primero, luego correctos — ${visible} ítems en total.`;
+    summary.style.color = 'var(--gray-400)';
+  }
+}
